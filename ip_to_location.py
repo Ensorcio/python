@@ -8,41 +8,32 @@ Install the requests library using "pip install requests"
 
 # Import libraries
 import requests
+import argparse
 import sys
 import os
 import json
 
-# Definte a function to write the results to a JSON file
-def file_output(fileoutput):
-    """Output results to to a file"""
-    with open(fileoutput, 'w') as outfile:
-        json.dump(data, outfile)
-        print('Results written to: ' + fileoutput)
-
+# Set up CLI arguments
+def parse_arguments():
+    parser = argparse.ArgumentParser(description="Find Geolocation data from IP address")
+    parser.add_argument('ipv4address', nargs='?')
+    parser.add_argument('-f', '--file', nargs='?', required=False, action='store', dest='fileoutput', help='Absolute path to file output', type=argparse.FileType('wb'))
+    args = parser.parse_args()
+    return args
 
 def main():
     # Check arguments for IP address and options from the command line input
-    args = sys.argv[1:]
-    if not args:
-        print "usage: [ip address] [-f abosolute path to file output]"
-        sys.exit(1)
-
-    # Set variables for the arguments
-    if len(args) < 2:
-        ipv4address = args[0]
-    else:
-        ipv4address = args[0]
-        fileoutput = args[2]
+    args = parse_arguments()
 
     # Grab the results from FreeGeoIP
-    results = requests.get('https://freegeoip.net/json/{}'.format(ipv4address))
+    results = requests.get('https://freegeoip.net/json/{}'.format(args.ipv4address))
 
     # Check if we get a result back and either print the result or output to file
     if results.status_code == 200:
-        global data
         data = results.json()
-        if fileoutput:
-            file_output(fileoutput)
+        if args.fileoutput:
+            print args.fileoutput
+            args.fileoutput.write(str(data))
         else:
             print data
     else:

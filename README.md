@@ -3,7 +3,7 @@ Creating various scripts to exercise the python skills.
 
 ## ip_to_location.py
 Using Free GeoIP to associate an IP address with a location
-### 1.0
+### 1.1
 Can query a single IP and output it to a JSON file.
 ## aws_instance_query.py
 ### 1.0
